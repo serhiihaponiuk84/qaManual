@@ -1,1 +1,2 @@
 # qaManual
+Test commit. Adding some text.
