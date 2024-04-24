@@ -1,0 +1,515 @@
+{
+	"info": {
+		"_postman_id": "5402cf31-c311-4a49-9929-63a79af088ee",
+		"name": "Hillel Qauto",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33195856"
+	},
+	"item": [
+		{
+			"name": "1. Create a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Check default user values\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.photoFilename).to.eql(\"default-user.png\");",
+							"    pm.expect(jsonData.data.distanceUnits).to.eql(\"km\");",
+							"    pm.expect(jsonData.data.currency).to.eql(\"usd\");",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"});",
+							"",
+							"pm.environment.set(\"userId\", pm.response.json().data.userId);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"newUserName\", \"Jane\");",
+							"pm.environment.set(\"newUserLastname\", \"Dou\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"{{newUserName}}\",\n  \"lastName\": \"{{newUserLastname}}\",\n  \"email\": \"{{$randomExampleEmail}}\",\n  \"password\": \"Qwerty12345\",\n  \"repeatPassword\": \"Qwerty12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/auth/signup",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Change First and Last Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check changed user values\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    let userId = pm.environment.get(\"userId\");",
+							"    let changedUserName = pm.environment.get(\"changedUserName\");",
+							"    let chengedUserLastname = pm.environment.get(\"chengedUserLastname\");",
+							"    pm.expect(jsonData.data.userId).to.eql(userId);",
+							"    pm.expect(jsonData.data.name).to.eql(changedUserName);",
+							"    pm.expect(jsonData.data.lastName).to.eql(chengedUserLastname);",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"changedUserName\", \"John\");",
+							"pm.environment.set(\"chengedUserLastname\", \"Smith\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"{{changedUserName}}\",\n  \"lastName\": \"{{chengedUserLastname}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/users/profile",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Change distance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check user values\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.distanceUnits).to.eql(\"ml\");",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"distanceUnits\": \"ml\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/users/settings",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"users",
+						"settings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Add a car to the user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"let jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check user values\", function () {",
+							"    pm.expect(jsonData.data.logo).to.eql(\"audi.png\");",
+							"    pm.expect(jsonData.data.brand).to.eql(\"Audi\");",
+							"    pm.expect(jsonData.data.model).to.eql(\"TT\");",
+							"    pm.expect(jsonData.data.carBrandId).to.eql(1);",
+							"    pm.expect(jsonData.data.carModelId).to.eql(1);",
+							"    pm.expect(jsonData.data.initialMileage).to.eql(jsonData.data.mileage);",
+							"    pm.expect(jsonData.data.updatedMileageAt).to.eql(jsonData.data.carCreatedAt);",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"    pm.expect(jsonData.data.id).exist;",
+							"});",
+							"",
+							"pm.environment.set(\"car_id\", jsonData.data.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let min = 1;",
+							"let max = 10;",
+							"function randomNumber() {",
+							"    return Math.floor(Math.random() * (max - min + 1)) + min;",
+							"}",
+							"",
+							"pm.environment.set(\"mileage\", randomNumber());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"carBrandId\": 1,\n  \"carModelId\": 1,\n  \"mileage\": {{mileage}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/cars",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"cars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Change mileage",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"let jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check user values\", function () {",
+							"    let car_id = pm.environment.get(\"car_id\");",
+							"    pm.expect(jsonData.data.logo).to.eql(\"audi.png\");",
+							"    pm.expect(jsonData.data.brand).to.eql(\"Audi\");",
+							"    pm.expect(jsonData.data.model).to.eql(\"TT\");",
+							"    pm.expect(jsonData.data.carBrandId).to.eql(1);",
+							"    pm.expect(jsonData.data.carModelId).to.eql(1);",
+							"    pm.expect(jsonData.data.id).to.eql(car_id);",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"    pm.expect(jsonData.data.updatedMileageAt).be.not.empty;",
+							"    pm.expect(jsonData.data.carCreatedAt).be.not.empty;",
+							"});",
+							"",
+							"pm.environment.set(\"car_id\", jsonData.data.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"carBrandId\": 1,\n  \"carModelId\": 1,\n  \"mileage\": {{$randomInt}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/cars/{{car_id}}",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"cars",
+						"{{car_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Add costs to the car",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"let jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Check user values\", function () {",
+							"    let car_id = pm.environment.get(\"car_id\");",
+							"    let reportedAt = pm.environment.get(\"reportedAt\");",
+							"    let liters = pm.environment.get(\"liters\");",
+							"    let mileage = pm.environment.get(\"mileage\");",
+							"    let totalCost = pm.environment.get(\"totalCost\");",
+							"    pm.expect(jsonData.data.carId).to.eql(car_id);",
+							"    pm.expect(jsonData.data.reportedAt).to.eql(reportedAt);",
+							"    pm.expect(jsonData.data.liters).to.eql(liters);",
+							"    pm.expect(jsonData.data.mileage).to.eql(mileage);",
+							"    pm.expect(jsonData.data.totalCost).to.eql(totalCost);",
+							"    pm.expect(jsonData.data.id).exist;",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let min = 1;",
+							"let max = 1000;",
+							"function randomNumber() {",
+							"    return Math.floor(Math.random() * (max - min + 1)) + min;",
+							"}",
+							"",
+							"pm.environment.set(\"mileage\", randomNumber());",
+							"pm.environment.set(\"liters\", randomNumber());",
+							"pm.environment.set(\"totalCost\", randomNumber());",
+							"",
+							"function generateRandomRecentDate(daysBack = 0) {",
+							"    let date = new Date(); // Текущая дата и время",
+							"    let days = Math.floor(Math.random() * daysBack); ",
+							"    date.setDate(date.getDate() - days);",
+							"    return date.toISOString();",
+							"}",
+							"",
+							"let randomRecentDate = generateRandomRecentDate();",
+							"",
+							"pm.environment.set(\"reportedAt\", randomRecentDate);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"carId\": {{car_id}},\n  \"reportedAt\": \"{{reportedAt}}\",\n  \"mileage\": {{mileage}},\n  \"liters\": {{liters}},\n  \"totalCost\": {{totalCost}},\n  \"forceMileage\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/expenses",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"expenses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Delete car",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check deleted user car_id\", function () {",
+							"    let car_id = pm.environment.get(\"car_id\");",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.carId).to.eql(car_id);",
+							"",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/cars/{{car_id}}",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"cars",
+						"{{car_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Delete user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check status value\", function () {",
+							"    let jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"ok\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://qauto2.forstudy.space/api/users",
+					"protocol": "https",
+					"host": [
+						"qauto2",
+						"forstudy",
+						"space"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "userId",
+			"value": ""
+		}
+	]
+}
